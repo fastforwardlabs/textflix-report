@@ -152,43 +152,43 @@ function makeFonts() {
   return `
   @font-face {
     font-family: 'Plex Mono';
-    src: url('/IBMPlexMono-Regular.woff2') format('woff2'),
-      url('/IBMPlexMono-Regular.woff') format('woff');
+    src: url('fonts/IBMPlexMono-Regular.woff2') format('woff2'),
+      url('fonts/IBMPlexMono-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
   }
   @font-face {
     font-family: 'Plex Mono';
-    src: url('/IBMPlexMono-Italic.woff2') format('woff2'),
-      url('/IBMPlexMono-Italic.woff') format('woff');
+    src: url('fonts/IBMPlexMono-Italic.woff2') format('woff2'),
+      url('fonts/IBMPlexMono-Italic.woff') format('woff');
     font-weight: normal;
     font-style: italic;
   }
   @font-face {
     font-family: 'Plex Sans';
-    src: url('/IBMPlexSans-Regular.woff2') format('woff2'),
-      url('/IBMPlexSans-Regular.woff') format('woff');
+    src: url('fonts/IBMPlexSans-Regular.woff2') format('woff2'),
+      url('fonts/IBMPlexSans-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
   }
   @font-face {
     font-family: 'Plex Sans';
-    src: url('/IBMPlexSans-Italic.woff2') format('woff2'),
-      url('/IBMPlexSans-Italic.woff') format('woff');
+    src: url('fonts/IBMPlexSans-Italic.woff2') format('woff2'),
+      url('fonts/IBMPlexSans-Italic.woff') format('woff');
     font-weight: normal;
     font-style: italic;
   }
   @font-face {
     font-family: 'Plex Sans';
-    src: url('/IBMPlexSans-Bold.woff2') format('woff2'),
-      url('/IBMPlexSans-Bold.woff') format('woff');
+    src: url('fonts/IBMPlexSans-Bold.woff2') format('woff2'),
+      url('fonts/IBMPlexSans-Bold.woff') format('woff');
     font-weight: bold;
     font-style: normal;
   }
   @font-face {
     font-family: 'Plex Sans';
-    src: url('/IBMPlexSans-BoldItalic.woff2') format('woff2'),
-      url('/IBMPlexSans-BoldItalic.woff') format('woff');
+    src: url('fonts/IBMPlexSans-BoldItalic.woff2') format('woff2'),
+      url('fonts/IBMPlexSans-BoldItalic.woff') format('woff');
     font-weight: bold;
     font-style: italic;
   }
