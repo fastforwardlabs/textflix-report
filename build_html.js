@@ -63,9 +63,6 @@ let svg_encoded = buff.toString('base64');
 
 let hcounter = `
 h1, h2, h3, h4, h5, h6, button { font-size: inherit; line-height: inherit; font-style: inherit; font-weight: inherit; margin: 0; font-feature-settings: "tnum"; border: none; background: transparent; padding: 0;  }
-button {
-  font-family: "Plex Mono", monospace;
-}
 button:focus, button:hover {
   background: rgba(0,0,0,0.125);
   outline: none;
@@ -130,7 +127,7 @@ blockquote + blockquote {
   margin-top: 0;
 }
 figcaption {
-  font-family: IBM Plex Mono;
+  font-family: "Plex Mono", monospace;
   margin-top: ${lq * 2}px;
   font-size: ${line * 0.75 * bf}px;
   line-height: ${line * 0.75}px;
