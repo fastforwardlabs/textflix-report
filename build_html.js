@@ -13,13 +13,32 @@ let rfs = bf * line;
 let lh = 1 / bf;
 let rlh = line;
 
+// Remember old renderer, if overridden, or proxy to default renderer
+var defaultRender =
+  md.renderer.rules.link_open ||
+  function(tokens, idx, options, env, self) {
+    return self.renderToken(tokens, idx, options);
+  };
+
+md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
+  // If you are sure other plugins can't add `target` - drop check below
+  var aIndex = tokens[idx].attrIndex('target');
+
+  if (aIndex < 0) {
+    tokens[idx].attrPush(['target', '_blank']); // add new attribute
+  } else {
+    tokens[idx].attrs[aIndex][1] = '_blank'; // replace value of existing attr
+  }
+
+  // pass token to default renderer.
+  return defaultRender(tokens, idx, options, env, self);
+};
+
 md.use(require('markdown-it-anchor'));
 md.use(require('markdown-it-table-of-contents'), {
   includeLevel: [2, 3, 4],
-  containerHeaderHtml: `<div style="display: flex; margin-top: ${lq *
-    2}px; margin-bottom: ${lq *
-    2}px; font-weight: bold; text-transform: uppercase;">
-    <div><button id="toggle_contents" style="padding-left: 1ch; padding-right: 1ch; margin-left: -1ch; margin-right: -1ch; cursor: pointer;">☰</button><span id="contents-label" style="margin-left: 1ch"> Contents</span></div>
+  containerHeaderHtml: `<div id="toc-header" style="display: flex; font-weight: bold; text-transform: uppercase;">
+    <div><button id="toggle_contents" style="padding-left: 0.5ch; padding-right: 0.5ch; cursor: pointer; position: relative; top: -1px;">☰</button><span id="contents-label" style="margin-left: 0;"> Contents</span></div>
   </div>`,
 });
 md.use(require('markdown-it-footnote'));
@@ -45,7 +64,7 @@ let svg_encoded = buff.toString('base64');
 let hcounter = `
 h1, h2, h3, h4, h5, h6, button { font-size: inherit; line-height: inherit; font-style: inherit; font-weight: inherit; margin: 0; font-feature-settings: "tnum"; border: none; background: transparent; padding: 0;  }
 button {
-  font-family: IBM Plex Mono;
+  font-family: "Plex Mono", monospace;
 }
 button:focus, button:hover {
   background: rgba(0,0,0,0.125);
@@ -98,7 +117,6 @@ p {
 }
 figure {
   margin: 0;
-  background: #fff;
   margin-top: ${lq * 2}px;
   margin-bottom: ${lq * 4}px;
 }
@@ -130,24 +148,73 @@ img {
 }
 `;
 
-let sidebar_width = '32ch';
+let sidebar_width = 32;
+let content_width = 64;
+
+function makeFonts() {
+  return `
+  @font-face {
+    font-family: 'Plex Mono';
+    src: url('/IBMPlexMono-Regular.woff2') format('woff2'),
+      url('/IBMPlexMono-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Plex Mono';
+    src: url('/IBMPlexMono-Italic.woff2') format('woff2'),
+      url('/IBMPlexMono-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'Plex Sans';
+    src: url('/IBMPlexSans-Regular.woff2') format('woff2'),
+      url('/IBMPlexSans-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Plex Sans';
+    src: url('/IBMPlexSans-Italic.woff2') format('woff2'),
+      url('/IBMPlexSans-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'Plex Sans';
+    src: url('/IBMPlexSans-Bold.woff2') format('woff2'),
+      url('/IBMPlexSans-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Plex Sans';
+    src: url('/IBMPlexSans-BoldItalic.woff2') format('woff2'),
+      url('/IBMPlexSans-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+  }
+  `;
+}
 
 function makeStyle() {
   return `<style type="text/css">
+    ${makeFonts()}
     * {
       box-sizing: border-box;
     }
     html {
       background: #fff;
-      font-family: IBM Plex Sans;
-      font-size: ${rfs}px;
-      line-height: ${lh};
+      font-family: "Plex Sans", sans-serif;
+      font-size: ${line * bf}px;
+      line-height: ${line}px;
     }
     body {
       margin: 0;
     }
     .content {
-      max-width: 64ch;
+      max-width: ${content_width}ch;
       padding-left: 2ch;
       padding-right: 2ch;
       margin: 0 auto;
@@ -183,14 +250,15 @@ function makeStyle() {
     position: fixed;
     left: 0;
     top: 0;
-    width: ${sidebar_width};
-    padding-left: 2ch;
-    padding-right: 2ch;
+    width: ${sidebar_width}ch;
     height: 100vh;
     overflow-y: auto;
+    background: #efefef;
+      // background: rgba(230,230,230,0.85);
+      //   backdrop-filter: blur(5px);
   }
   body {
-    padding-left: ${sidebar_width};
+    padding-left: ${sidebar_width}ch;
   }
   p:empty {
     display: none;
@@ -208,14 +276,10 @@ function makeStyle() {
     font-style: normal;
     text-transform: none;
     letter-spacing: 0;
-    padding-left: 1ch;
-    text-indent: -1ch;
   }
  .table-of-contents > ul > li > ul > li > ul > li {
     font-weight: normal;
     font-style: italic;
-    padding-left: 1ch;
-    text-indent: -1ch;
   }
  .table-of-contents a {
     text-decoration: none;
@@ -226,9 +290,37 @@ function makeStyle() {
  sup {
     display: none;
   }
-  .table-of-contents ul li a.active {
-    text-decoration: underline; 
+  .table-of-contents ul a {
+    display: block;
+    padding-left: 3ch;
+    text-indent: -1ch;
+    padding-right: 2ch;
   }
+  .table-of-contents ul li a.active {
+    position: relative;
+    background: #ddd;
+    // text-decoration: line-through;
+  }
+
+  .table-of-contents ul li a.active:before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    content: "";
+    width: 1ch;
+    background: rgb(255, 198, 91);
+    background: #666;
+    display: none;
+  }
+  .table-of-contents > ul > li > ul > li > a {
+    padding-left: 4ch;
+  }
+  .table-of-contents > ul > li > ul > li > ul > li > a {
+    padding-left: 5ch;
+  }
+
+
 
   .toc-desktop-hidden .table-of-contents {
     width: auto;
@@ -242,6 +334,82 @@ function makeStyle() {
   body.toc-desktop-hidden {
     padding-left: 5ch;
   }
+  body:before {
+    content: " ";
+    height: ${line}px;
+    width: 96ch;
+    background: black;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 999;
+    display: none;
+  }
+    #toc-header {
+      margin-top: ${lq * 2}px;
+      margin-bottom: ${lq * 2}px;
+      margin-left: 1ch;
+      margin-right: 1ch;
+    }
+ 
+  @media screen and (max-width: 1028px) {
+    #toc-header {
+      margin-top: ${lq}px;
+      margin-bottom: ${lq}px;
+    }
+ 
+    body {
+      padding-left: 0;
+      padding-top: ${lq * 6}px;
+    }
+    #contents-label {
+      display: none;
+    }
+    .table-of-contents {
+      height: auto;
+      width: 100%;
+      z-index: 3;
+    }
+  body.toc-mobile-show .content:before {
+      content: "";
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      background: rgba(0,0,0,0.25);
+      z-index: 2;
+      border-top: solid ${line * 1.5}px #aaa;
+    }
+ 
+    .table-of-contents > ul {
+      display: none;
+    }
+   body.toc-mobile-show {
+      overflow: hidden;
+    }
+    body.toc-mobile-show #toc-header {
+      margin-top: ${lq * 1}px;
+      margin-bottom: ${lq * 1}px;
+      position: relative;
+    }
+    body.toc-mobile-show .table-of-contents {
+      width: ${sidebar_width}ch;
+      height: 100vh;
+      max-width: calc(100% - 4ch);
+      overflow: auto;
+    }
+   body.toc-mobile-show .table-of-contents > ul {
+      display: block;
+      padding-bottom: ${line * 1}px;
+      position: relative;
+    }
+    body.toc-mobile-show #contents-label {
+      display: inline;
+      position: relative;
+    }
+  }
+}
 </style>`;
 }
 
@@ -275,7 +443,7 @@ function makeJS() {
           let target_id = entry[0].target.getAttribute('id')
           setActive(target_id)
         }
-      }, { threshold: 1, rootMargin: "0px 0px -20% 0px" });
+      }, { threshold: 1, rootMargin: "0px 0px -50% 0px" });
 
       let first = true
       for (let heading of headings) {
@@ -288,13 +456,52 @@ function makeJS() {
 
       document.querySelector('#toggle_contents').addEventListener('click', () => {
         let body = document.body
-        let hidden_class = "toc-desktop-hidden"
-        if (body.className === hidden_class) {
-          body.className = ''
+        if (window.innerWidth > 1027) {
+          let hidden_class = "toc-desktop-hidden"
+          if (body.className === hidden_class) {
+            body.className = ''
+          } else {
+            body.className = hidden_class
+          }
         } else {
-          body.className = hidden_class
+          let show_class = "toc-mobile-show"
+          if (body.className === show_class) {
+            body.className = ''
+          } else {
+            body.className = show_class
+          }
         }
       })
+
+      for (let link of links) {
+        link.addEventListener('click', (e) => {
+          let href = e.target.getAttribute('href')
+          let elem = document.querySelector(href)
+          window.scroll({
+            top: elem.offsetTop - ${line},
+            left: 0,
+            behavior: 'smooth'
+          })
+          if (window.innerWidth < 1028) {
+            document.body.className = ''
+          }
+          e.preventDefault() 
+        })
+      }
+
+      document.querySelector('.content').addEventListener('click', () => {
+        document.body.className = ''
+      })
+      document.querySelector('.table-of-contents').addEventListener('click', (e) => {
+        e.stopPropagation()
+      })
+
+      let mediaQueryList = window.matchMedia("(max-width: 1028px)");
+      function handleBreakpoint(mql) {
+        // clear any left over toggle classes
+        document.body.className = ''
+      }
+      mediaQueryList.addListener(handleBreakpoint);
     }, false);
   </script>`;
 }
@@ -302,6 +509,7 @@ function makeJS() {
 function makeHead() {
   return `<head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
     ${makeStyle()}
     ${makeJS()}
   </head>`;
@@ -313,7 +521,7 @@ function wrap(content) {
       ${makeHead()}
       <body>
         <div class="content nodebug" style="position: relative;">
-          <div style="margin-top: ${line}px;">Cloudera Fast Forward</div>
+          <div style="margin-top: ${line}px;"><a href="https://experiments.fastforwardlabs.com" target="_blank">Cloudera Fast Forward</a></div>
           ${content}
         </div>
       </body>

@@ -2,6 +2,7 @@
     <html lang="en">
       <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
     <style type="text/css">
     * {
       box-sizing: border-box;
@@ -10,7 +11,7 @@
       background: #fff;
       font-family: IBM Plex Sans;
       font-size: 17.5px;
-      line-height: 1.6;
+      line-height: 28px;
     }
     body {
       margin: 0;
@@ -99,7 +100,6 @@ p {
 }
 figure {
   margin: 0;
-  background: #fff;
   margin-top: 14px;
   margin-bottom: 28px;
 }
@@ -139,10 +139,11 @@ img {
     left: 0;
     top: 0;
     width: 32ch;
-    padding-left: 2ch;
-    padding-right: 2ch;
     height: 100vh;
     overflow-y: auto;
+    background: #efefef;
+      // background: rgba(230,230,230,0.85);
+      //   backdrop-filter: blur(5px);
   }
   body {
     padding-left: 32ch;
@@ -163,14 +164,10 @@ img {
     font-style: normal;
     text-transform: none;
     letter-spacing: 0;
-    padding-left: 1ch;
-    text-indent: -1ch;
   }
  .table-of-contents > ul > li > ul > li > ul > li {
     font-weight: normal;
     font-style: italic;
-    padding-left: 1ch;
-    text-indent: -1ch;
   }
  .table-of-contents a {
     text-decoration: none;
@@ -181,9 +178,37 @@ img {
  sup {
     display: none;
   }
-  .table-of-contents ul li a.active {
-    text-decoration: underline; 
+  .table-of-contents ul a {
+    display: block;
+    padding-left: 3ch;
+    text-indent: -1ch;
+    padding-right: 2ch;
   }
+  .table-of-contents ul li a.active {
+    position: relative;
+    background: #ddd;
+    // text-decoration: line-through;
+  }
+
+  .table-of-contents ul li a.active:before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    content: "";
+    width: 1ch;
+    background: rgb(255, 198, 91);
+    background: #666;
+    display: none;
+  }
+  .table-of-contents > ul > li > ul > li > a {
+    padding-left: 4ch;
+  }
+  .table-of-contents > ul > li > ul > li > ul > li > a {
+    padding-left: 5ch;
+  }
+
+
 
   .toc-desktop-hidden .table-of-contents {
     width: auto;
@@ -197,6 +222,82 @@ img {
   body.toc-desktop-hidden {
     padding-left: 5ch;
   }
+  body:before {
+    content: " ";
+    height: 28px;
+    width: 96ch;
+    background: black;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 999;
+    display: none;
+  }
+    #toc-header {
+      margin-top: 14px;
+      margin-bottom: 14px;
+      margin-left: 1ch;
+      margin-right: 1ch;
+    }
+ 
+  @media screen and (max-width: 1028px) {
+    #toc-header {
+      margin-top: 7px;
+      margin-bottom: 7px;
+    }
+ 
+    body {
+      padding-left: 0;
+      padding-top: 42px;
+    }
+    #contents-label {
+      display: none;
+    }
+    .table-of-contents {
+      height: auto;
+      width: 100%;
+      z-index: 3;
+    }
+  body.toc-mobile-show .content:before {
+      content: "";
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      background: rgba(0,0,0,0.25);
+      z-index: 2;
+      border-top: solid 42px #aaa;
+    }
+ 
+    .table-of-contents > ul {
+      display: none;
+    }
+   body.toc-mobile-show {
+      overflow: hidden;
+    }
+    body.toc-mobile-show #toc-header {
+      margin-top: 7px;
+      margin-bottom: 7px;
+      position: relative;
+    }
+    body.toc-mobile-show .table-of-contents {
+      width: 32ch;
+      height: 100vh;
+      max-width: calc(100% - 4ch);
+      overflow: auto;
+    }
+   body.toc-mobile-show .table-of-contents > ul {
+      display: block;
+      padding-bottom: 28px;
+      position: relative;
+    }
+    body.toc-mobile-show #contents-label {
+      display: inline;
+      position: relative;
+    }
+  }
+}
 </style>
     <script>
     function inViewport(elem) {
@@ -227,7 +328,7 @@ img {
           let target_id = entry[0].target.getAttribute('id')
           setActive(target_id)
         }
-      }, { threshold: 1, rootMargin: "0px 0px -20% 0px" });
+      }, { threshold: 1, rootMargin: "0px 0px -50% 0px" });
 
       let first = true
       for (let heading of headings) {
@@ -240,30 +341,69 @@ img {
 
       document.querySelector('#toggle_contents').addEventListener('click', () => {
         let body = document.body
-        let hidden_class = "toc-desktop-hidden"
-        if (body.className === hidden_class) {
-          body.className = ''
+        if (window.innerWidth > 1027) {
+          let hidden_class = "toc-desktop-hidden"
+          if (body.className === hidden_class) {
+            body.className = ''
+          } else {
+            body.className = hidden_class
+          }
         } else {
-          body.className = hidden_class
+          let show_class = "toc-mobile-show"
+          if (body.className === show_class) {
+            body.className = ''
+          } else {
+            body.className = show_class
+          }
         }
       })
+
+      for (let link of links) {
+        link.addEventListener('click', (e) => {
+          let href = e.target.getAttribute('href')
+          let elem = document.querySelector(href)
+          window.scroll({
+            top: elem.offsetTop - 28,
+            left: 0,
+            behavior: 'smooth'
+          })
+          if (window.innerWidth < 1028) {
+            document.body.className = ''
+          }
+          e.preventDefault() 
+        })
+      }
+
+      document.querySelector('.content').addEventListener('click', () => {
+        document.body.className = ''
+      })
+      document.querySelector('.table-of-contents').addEventListener('click', (e) => {
+        e.stopPropagation()
+      })
+
+      let mediaQueryList = window.matchMedia("(max-width: 1028px)");
+      function handleBreakpoint(mql) {
+        // clear any left over toggle classes
+        document.body.className = ''
+      }
+      mediaQueryList.addListener(handleBreakpoint);
     }, false);
   </script>
   </head>
       <body>
         <div class="content nodebug" style="position: relative;">
-          <div style="margin-top: 28px;">Cloudera Fast Forward</div>
+          <div style="margin-top: 28px;"><a href="https://experiments.fastforwardlabs.com" target="_blank">Cloudera Fast Forward</a></div>
           <h1 id="textflix%3A-using-transfer-learning-for-a-natural-language-processing-prototype">Textflix: Using Transfer Learning for a Natural Language Processing Prototype</h1>
-<p><div class="table-of-contents"><div style="display: flex; margin-top: 14px; margin-bottom: 14px; font-weight: bold; text-transform: uppercase;">
-    <div><button id="toggle_contents" style="padding-left: 1ch; padding-right: 1ch; margin-left: -1ch; margin-right: -1ch; cursor: pointer;">☰</button><span id="contents-label" style="margin-left: 1ch"> Contents</span></div>
+<p><div class="table-of-contents"><div id="toc-header" style="display: flex; font-weight: bold; text-transform: uppercase;">
+    <div><button id="toggle_contents" style="padding-left: 0.5ch; padding-right: 0.5ch; cursor: pointer; position: relative; top: -1px;">☰</button><span id="contents-label" style="margin-left: 0;"> Contents</span></div>
   </div><ul><li><a href="#sentiment">Sentiment</a></li><li><a href="#dataset">Dataset</a></li><li><a href="#models">Models</a><ul><li><a href="#baseline-models">Baseline Models</a><ul><li><a href="#nb-svm">NB-SVM</a></li><li><a href="#word-vectors">Word Vectors</a></li></ul></li><li><a href="#transfer-learning-models">Transfer Learning Models</a></li></ul></li><li><a href="#interpretability">Interpretability</a><ul><li><a href="#modified-lime-for-sequences">Modified LIME for Sequences</a></li><li><a href="#interpretability-provides-trust">Interpretability Provides Trust</a></li><li><a href="#interpretability-as-a-summarization-tool">Interpretability as a Summarization Tool</a></li></ul></li><li><a href="#successes-and-failures">Successes and Failures</a><ul><li><a href="#bert-identifies-mixed-feelings">BERT Identifies Mixed Feelings</a></li><li><a href="#bert-handles-subtle-language-and-negation-well">BERT Handles Subtle Language and Negation Well</a></li><li><a href="#sentiment-can-be-unclear">Sentiment Can Be Unclear</a></li><li><a href="#entity-assignment-presents-a-challenge">Entity Assignment Presents a Challenge</a></li></ul></li><li><a href="#product-design">Product Design</a><ul><li><a href="#visualizing-the-classification">Visualizing the Classification</a></li><li><a href="#developing-the-story">Developing the Story</a></li><li><a href="#adding-drama-to-analysis">Adding Drama to Analysis</a></li><li><a href="#a-peek-behind-the-curtain">A Peek Behind the Curtain</a></li></ul></li></ul></div></p>
-<figure><img src="figures/textflix-screenshot.png" alt="The Textflix prototype"><figcaption><a href="https://textflix.fastforwardlabs.com">The Textflix prototype</a></figcaption></figure>
+<figure><img src="figures/textflix-screenshot.png" alt="The Textflix prototype"><figcaption><a href="https://textflix.fastforwardlabs.com" target="_blank">The Textflix prototype</a></figcaption></figure>
 <p>Perhaps the most exciting aspect of transfer learning is that it is so broadly
 applicable. It does not enable one specific capability, like question answering,
 language translation, text classification, or search. It makes <em>each</em> of these
 more accurate, at a lower cost, with less data, and thus more accessible to a
 broader community. It opens the pathway from research to production.</p>
-<p>We built a prototype, <a href="https://textflix.fastforwardlabs.com">Textflix</a>, that leverages transfer learning for sentiment
+<p>We built a prototype, <a href="https://textflix.fastforwardlabs.com" target="_blank">Textflix</a>, that leverages transfer learning for sentiment
 analysis. Textflix performs positive or negative sentiment detection on movie
 reviews, which present a challenge to text processing systems because of the
 complex ways in which humans express their preferences. We added LIME, an
@@ -323,7 +463,7 @@ present a logical reference for comparing future models to, and are usually more
 interpretable than more sophisticated alternatives. In some cases, the
 simplicity and interpretability advantages they present may outweigh the
 decrease in accuracy in the results they produce. For our prototype, we explored
-two baselines: <a href="https://aclweb.org/anthology/papers/P/P12/P12-2018/">SVM with Naive Bayes features</a> and word vectors.</p>
+two baselines: <a href="https://aclweb.org/anthology/papers/P/P12/P12-2018/" target="_blank">SVM with Naive Bayes features</a> and word vectors.</p>
 <h4 id="nb-svm">NB-SVM</h4>
 <p>For text classification problems like sentiment analysis it makes sense to
 choose a simple model based on bag-of-words as the first baseline. In many text
@@ -334,7 +474,7 @@ machine. This model has been shown to produce strong linear baselines for text
 classification, and sentiment analysis in particular.</p>
 <figure><img src="figures/fig-22.png" alt="Pipeline architecture for the NB-SVM model."><figcaption>Pipeline architecture for the NB-SVM model.</figcaption></figure>
 <p>In testing this model we generated both uni- and bigram features for the NB-SVM
-classifier, removed stopwords from the input, and used a <a href="https://snowballstem.org/">Snowball stemmer</a> to normalize each word.</p>
+classifier, removed stopwords from the input, and used a <a href="https://snowballstem.org/" target="_blank">Snowball stemmer</a> to normalize each word.</p>
 <p>The performance of the NB-SVM was poor and unpredictable at low dataset sizes –
 it simply did not have enough observations to learn which words strongly
 correlated with positive or negative sentiment. However, at larger training set
@@ -406,7 +546,7 @@ predictions to be surprisingly useful. Here we will discuss our approach and
 some of the benefits.</p>
 <figure><img src="figures/rockstar-review.png" alt="Predicting sentiment is useful, but pointing readers to specific evidence that the model relies on allows the reader to trust the prediction."><figcaption>Predicting sentiment is useful, but pointing readers to specific evidence that the model relies on allows the reader to trust the prediction.</figcaption></figure>
 <h3 id="modified-lime-for-sequences">Modified LIME for Sequences</h3>
-<p>We used the technique of <a href="https://arxiv.org/abs/1602.04938">Local Interpretable Model-agnostic Explanations (LIME)</a> to add interpretability. LIME can be
+<p>We used the technique of <a href="https://arxiv.org/abs/1602.04938" target="_blank">Local Interpretable Model-agnostic Explanations (LIME)</a> to add interpretability. LIME can be
 applied to almost any type of model, but here we will consider its application to
 text data. Put simply, LIME is a way to understand how different parts of an
 input affect the output of a model. This is accomplished, essentially, by
@@ -450,7 +590,7 @@ the reviews, looking for evidence of the model’s predictions. This introduces 
 significant cognitive burden – reviews are long, but the sentiment may be
 expressed in just one sentence. The following review, where most of the text is
 simply summarizing the plot, is a good example.</p>
-<figure><img src="figures/image-interp-compare.png" alt="Top: The model classifies this review as positive, but with no supporting evidence. Bottom: The model explains its positive classification by highlighting a single sentence, which should be enough to convince users to trust the prediction. View the review at on Texflix"><figcaption>Top: The model classifies this review as positive, but with no supporting evidence. Bottom: The model explains its positive classification by highlighting a single sentence, which should be enough to convince users to trust the prediction. View the review at <a href="https://textflix.fastforwardlabs.com/review?id=46">on Texflix</a></figcaption></figure>
+<figure><img src="figures/image-interp-compare.png" alt="Top: The model classifies this review as positive, but with no supporting evidence. Bottom: The model explains its positive classification by highlighting a single sentence, which should be enough to convince users to trust the prediction. View the review at on Texflix"><figcaption>Top: The model classifies this review as positive, but with no supporting evidence. Bottom: The model explains its positive classification by highlighting a single sentence, which should be enough to convince users to trust the prediction. View the review at <a href="https://textflix.fastforwardlabs.com/review?id=46" target="_blank">on Texflix</a></figcaption></figure>
 <p>Without interpretability, a user may need to skim each and every review for
 evidence supporting the model’s predictions. But using LIME, we can
 automatically point to specific evidence that the model relies on to make its
@@ -474,7 +614,7 @@ the limited training data. It was a clear and significant improvement over the
 alternatives. But like any model, BERT has its limitations. In this section we
 examine some of the concrete successes and failures of the prototype model.</p>
 <h3 id="bert-identifies-mixed-feelings">BERT Identifies Mixed Feelings</h3>
-<figure><img src="figures/image-opposing.png" alt="Interpretability at the sentence level shows how the model balances opposing sentiments within reviews. View the review on Textflix"><figcaption>Interpretability at the sentence level shows how the model balances opposing sentiments within reviews. View the review <a href="https://textflix.fastforwardlabs.com/review?id=137">on Textflix</a></figcaption></figure>
+<figure><img src="figures/image-opposing.png" alt="Interpretability at the sentence level shows how the model balances opposing sentiments within reviews. View the review on Textflix"><figcaption>Interpretability at the sentence level shows how the model balances opposing sentiments within reviews. View the review <a href="https://textflix.fastforwardlabs.com/review?id=137" target="_blank">on Textflix</a></figcaption></figure>
 <p>There are many reviews in the dataset that would classify as “easy” in the sense that they communicate clear sentiment using words that are positive or negative. The final deployed BERT model, unsurprisingly, handles these cases well. The passage above demonstrates some of this plain language, but is interesting in that it has individual sentences that communicate opposing sentiments. With the added interpretability mechanism, it is possible to not only show the model’s overall prediction for the sentiment of the review but also its predictions for some of the individual parts. This helps draw attention to reviews that are mixed, where a single sentiment score does not necessarily tell the entire story.</p>
 <h3 id="bert-handles-subtle-language-and-negation-well">BERT Handles Subtle Language and Negation Well</h3>
 <blockquote>

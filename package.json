@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "node build_html.js"
+    "build": "node build_html.js",
+    "deploy": "node build_html.js && touch out/.nojekyll && git add out/ && git commit -m \"Deploy to gh-pages\" && git subtree push --prefix out origin gh-pages"
   },
   "keywords": [],
   "author": "",
