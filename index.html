@@ -4,12 +4,56 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <style type="text/css">
+    
+  @font-face {
+    font-family: 'Plex Mono';
+    src: url('/IBMPlexMono-Regular.woff2') format('woff2'),
+      url('/IBMPlexMono-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Plex Mono';
+    src: url('/IBMPlexMono-Italic.woff2') format('woff2'),
+      url('/IBMPlexMono-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'Plex Sans';
+    src: url('/IBMPlexSans-Regular.woff2') format('woff2'),
+      url('/IBMPlexSans-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Plex Sans';
+    src: url('/IBMPlexSans-Italic.woff2') format('woff2'),
+      url('/IBMPlexSans-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'Plex Sans';
+    src: url('/IBMPlexSans-Bold.woff2') format('woff2'),
+      url('/IBMPlexSans-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Plex Sans';
+    src: url('/IBMPlexSans-BoldItalic.woff2') format('woff2'),
+      url('/IBMPlexSans-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+  }
+  
     * {
       box-sizing: border-box;
     }
     html {
       background: #fff;
-      font-family: IBM Plex Sans;
+      font-family: "Plex Sans", sans-serif;
       font-size: 17.5px;
       line-height: 28px;
     }
@@ -47,7 +91,7 @@
   
 h1, h2, h3, h4, h5, h6, button { font-size: inherit; line-height: inherit; font-style: inherit; font-weight: inherit; margin: 0; font-feature-settings: "tnum"; border: none; background: transparent; padding: 0;  }
 button {
-  font-family: IBM Plex Mono;
+  font-family: "Plex Mono", monospace;
 }
 button:focus, button:hover {
   background: rgba(0,0,0,0.125);
