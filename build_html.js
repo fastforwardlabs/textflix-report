@@ -127,7 +127,7 @@ blockquote + blockquote {
   margin-top: 0;
 }
 figcaption {
-  font-family: "Plex Mono", monospace;
+  font-family: "Plex Mono", serif, monospace;
   margin-top: ${lq * 2}px;
   font-size: ${line * 0.75 * bf}px;
   line-height: ${line * 0.75}px;
@@ -203,7 +203,7 @@ function makeStyle() {
     }
     html {
       background: #fff;
-      font-family: "Plex Sans", sans-serif;
+      font-family: "Plex Sans", serif, sans-serif;
       font-size: ${line * bf}px;
       line-height: ${line}px;
     }
@@ -425,11 +425,13 @@ function makeJS() {
     function setActive(target_id) {
       let selector = '.table-of-contents ul li a[href="#' + target_id + '"]'
       let link = document.querySelector(selector)
-      link.className = 'active'
+      if (link !== null) {
+        link.className = 'active'
+      }
     }
 
     window.addEventListener("load", (event) => {
-      let headings = document.querySelectorAll('h2, h3, h4');
+      let headings = document.querySelectorAll('h1, h2, h3, h4');
       let links = document.querySelectorAll('.table-of-contents ul li a')
 
       observer = new IntersectionObserver((entry, observer) => {
@@ -487,7 +489,9 @@ function makeJS() {
       }
 
       document.querySelector('.content').addEventListener('click', () => {
-        document.body.className = ''
+        if (window.innerWidth < 1028) {
+          document.body.className = ''
+        }
       })
       document.querySelector('.table-of-contents').addEventListener('click', (e) => {
         e.stopPropagation()
