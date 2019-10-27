@@ -556,11 +556,14 @@ let filenames = fs.readdirSync(path.join(__dirname, 'src'));
 // let filenames = ['00-frontmatter.md', '03-prototype.md'];
 let report = '';
 for (let f = 0; f < filenames.length; f++) {
-  let content = fs.readFileSync('src/' + filenames[f], 'utf-8');
+  let content = fs.readFileSync(
+    path.join(__dirname, 'src/') + filenames[f],
+    'utf-8'
+  );
   report += content + `\n`;
 }
 let html = wrap(md.render(report));
-fs.writeFileSync('out/' + 'index.html', html);
+fs.writeFileSync(path.join(__dirname, 'out/') + 'index.html', html);
 
 let margin = '0.5in';
 
