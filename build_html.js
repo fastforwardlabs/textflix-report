@@ -552,7 +552,7 @@ function wrap(content) {
   `;
 }
 
-let filenames = fs.readdirSync('src');
+let filenames = fs.readdirSync(path.join(__dirname, 'src'));
 // let filenames = ['00-frontmatter.md', '03-prototype.md'];
 let report = '';
 for (let f = 0; f < filenames.length; f++) {
