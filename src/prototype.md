@@ -65,7 +65,7 @@ benefits of transfer learning is that it eliminates the need to invent complex
 new neural network architectures that uniquely solve a particular problem.
 Off-the-shelf transfer learning models already provide state-of-the-art
 accuracy, so the fewer changes we make, the better. After comparing several
-models, we ended up using the large version of the BERT model..
+models, we ended up using the large version of the BERT model.
 
 We experimented with several popular transfer learning models, and also compared
 their performance to simple but strong baseline methods. Although we built
@@ -281,7 +281,7 @@ examine some of the concrete successes and failures of the prototype model.
 
 ### BERT Identifies Mixed Feelings
 
-![Interpretability at the sentence level shows how the model balances opposing sentiments within reviews. View the review [on Textflix](https://textflix.fastforwardlabs.com/review?id=137)](figures/image-opposing.png)
+![Interpretability at the sentence level shows how the model balances opposing sentiments within reviews. View the review [on Textflix](https://textflix.fastforwardlabs.com/review?id=137)](figures/image-opposing.png).
 
 There are many reviews in the dataset that would classify as "easy" in the sense that they communicate clear sentiment using words that are positive or negative. The final deployed BERT model, unsurprisingly, handles these cases well. The passage above demonstrates some of this plain language, but is interesting in that it has individual sentences that communicate opposing sentiments. With the added interpretability mechanism, it is possible to not only show the model's overall prediction for the sentiment of the review but also its predictions for some of the individual parts. This helps draw attention to reviews that are mixed, where a single sentiment score does not necessarily tell the entire story.
 
@@ -368,7 +368,7 @@ invoke those skills if it is important for prediction accuracy during training.
 Transfer learning models are powerful, but they still fall far short of human
 intuition.
 
-## Product Design
+## Prototype Product Design
 
 ![The final Textflix design.](figures/textflix-screenshot.png)
 
@@ -469,3 +469,10 @@ kinds of capabilities that text analysis could open up for a product. Then we
 wanted to provide a view into the model's accuracy and show it in the context of
 a less advanced approach. We hope the final product will be both inspirational
 and informative for people working on similar projects.
+
+::: info
+This is a chapter from the Cloudera Fast Forward report on transfer learning for natural
+language processing. See more of work on our [experiments
+page](https://experiments.fastforwardlabs.com) or [learn more about working with
+us](https://www.cloudera.com/products/fast-forward-labs-research.html).
+:::

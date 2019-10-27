@@ -1,7 +1,6 @@
 let fs = require('fs');
 let path = require('path');
 let md = require('markdown-it')({ typographer: true });
-let puppeteer = require('puppeteer');
 var implicitFigures = require('markdown-it-implicit-figures');
 
 let line = 28;
@@ -21,16 +20,12 @@ var defaultRender =
   };
 
 md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
-  // If you are sure other plugins can't add `target` - drop check below
   var aIndex = tokens[idx].attrIndex('target');
-
   if (aIndex < 0) {
-    tokens[idx].attrPush(['target', '_blank']); // add new attribute
+    tokens[idx].attrPush(['target', '_blank']);
   } else {
-    tokens[idx].attrs[aIndex][1] = '_blank'; // replace value of existing attr
+    tokens[idx].attrs[aIndex][1] = '_blank';
   }
-
-  // pass token to default renderer.
   return defaultRender(tokens, idx, options, env, self);
 };
 
@@ -38,9 +33,11 @@ md.use(require('markdown-it-anchor'));
 md.use(require('markdown-it-table-of-contents'), {
   includeLevel: [2, 3, 4],
   containerHeaderHtml: `<div id="toc-header" style="display: flex; font-weight: bold; text-transform: uppercase;">
-    <div><button id="toggle_contents" style="padding-left: 0.5ch; padding-right: 0.5ch; cursor: pointer; position: relative; top: -1px;">☰</button><span id="contents-label" style="margin-left: 0;"> Contents</span></div>
+     <div><button id="toggle_contents" style="padding-left: 0.5ch; padding-right: 0.5ch; cursor: pointer; position: relative; top: -1px;">☰</button><span id="contents-label" style="margin-left: 0;"> Contents</span></div>
   </div>`,
 });
+let custom_container = require('markdown-it-container');
+md.use(custom_container, 'info', {});
 md.use(require('markdown-it-footnote'));
 md.use(implicitFigures, {
   dataType: false, // <figure data-type="image">, default: false
@@ -121,7 +118,7 @@ blockquote {
   margin: 0;
    margin-top: ${lq * 2}px;
   margin-bottom: ${lq * 2}px;
-margin-left: 3ch;
+margin-left: 2ch;
 }
 blockquote + blockquote {
   margin-top: 0;
@@ -131,6 +128,17 @@ figcaption {
   margin-top: ${lq * 2}px;
   font-size: ${line * 0.75 * bf}px;
   line-height: ${line * 0.75}px;
+}
+.info {
+  background: #efefef;
+  padding-left: 2ch;
+  padding-right: 2ch;
+  padding-top: ${lq * 2}px;
+  padding-bottom: ${lq * 2}px;
+  margin-bottom: ${line}px;
+}
+.info p:last-child {
+  margin-bottom: 0;
 }
 img {
   display: block;
@@ -217,7 +225,7 @@ function makeStyle() {
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      padding-bottom: ${line * 1.5}px;
+      padding-bottom: ${line * 0}px;
     }
    p, ul, ol {
       margin: 0;
@@ -508,9 +516,23 @@ function makeJS() {
 }
 
 function makeHead() {
+  let title = 'Textflix: Using Transfer Learning for an NLP Prototype';
+  let description =
+    'Learn how we created a sentiment analyzer for movie reviews using pretrained BERT word embeddings and LIME for interpretability.';
   return `<head>
     <meta charset="utf-8" />
+
+    <title>${title}</title>
+    <meta name="description" content="${description}" />
+
+    <meta property="og:title" content="${title}" /> 
+    <meta property="og:description" content="${description}" />
+    <meta property="og:image" content="add image" />
+    <meta property="og:url" content"add url" />
+    <meta name="twitter:card" content="summary_large_image" />
+    
     <meta name="viewport" content="width=device-width" />
+    
     ${makeStyle()}
     ${makeJS()}
   </head>`;
@@ -530,9 +552,8 @@ function wrap(content) {
   `;
 }
 
-// let filenames = fs.readdirSync('src');
+let filenames = fs.readdirSync('src');
 // let filenames = ['00-frontmatter.md', '03-prototype.md'];
-let filenames = ['03-prototype.md'];
 let report = '';
 for (let f = 0; f < filenames.length; f++) {
   let content = fs.readFileSync('src/' + filenames[f], 'utf-8');
@@ -543,23 +564,24 @@ fs.writeFileSync('out/' + 'index.html', html);
 
 let margin = '0.5in';
 
-(async () => {
-  let browser = await puppeteer.launch();
-  let page = await browser.newPage();
-  await page.goto(`file:${path.join(__dirname, 'out/index.html')}`, {
-    waitUntil: 'networkidle2',
-  });
-  await page.pdf({
-    path: 'out/book.pdf',
-    height: '8.5in',
-    width: '5.5in',
-    displayHeaderFooter: true,
-    margin: {
-      top: margin,
-      left: margin,
-      right: margin,
-      bottom: margin,
-    },
-  });
-  await browser.close();
-})();
+// turned off for now (function not called)
+// async () => {
+//   let browser = await puppeteer.launch();
+//   let page = await browser.newPage();
+//   await page.goto(`file:${path.join(__dirname, 'out/index.html')}`, {
+//     waitUntil: 'networkidle2',
+//   });
+//   await page.pdf({
+//     path: 'out/book.pdf',
+//     height: '8.5in',
+//     width: '5.5in',
+//     displayHeaderFooter: true,
+//     margin: {
+//       top: margin,
+//       left: margin,
+//       right: margin,
+//       bottom: margin,
+//     },
+//   });
+//   await browser.close();
+// }();

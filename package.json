@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node build_html.js",
+    "dev": "nodemon -w src -w build_html.js -e md,js -V build_html.js & reload -d out -v -p 3000",
     "deploy": "node build_html.js && touch out/.nojekyll && git add out/ && git commit -m \"Deploy to gh-pages\" && git subtree push --prefix out origin gh-pages"
   },
   "keywords": [],
@@ -13,11 +14,15 @@
   "dependencies": {
     "markdown-it": "^10.0.0",
     "markdown-it-anchor": "^5.2.5",
+    "markdown-it-container": "^2.0.0",
     "markdown-it-footnote": "^3.0.2",
     "markdown-it-implicit-figures": "^0.9.0",
     "markdown-it-table-of-contents": "^0.4.4",
     "markdown-it-toc-and-anchor": "^4.2.0",
-    "markdown-it-wiki-toc": "^1.0.4",
-    "puppeteer": "^1.20.0"
+    "markdown-it-wiki-toc": "^1.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4",
+    "reload": "^3.0.3"
   }
 }
