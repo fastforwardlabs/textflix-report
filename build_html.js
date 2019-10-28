@@ -530,7 +530,7 @@ function makeHead() {
     <meta property="og:title" content="${title}" /> 
     <meta property="og:description" content="${description}" />
     <meta property="og:image" content="textflix-report-share.png" />
-    <meta property="og:url" content="https://experiments.fastforwardlabs.com/log/textflix-report/" />
+    <meta property="og:url" content="https://experiments.fastforwardlabs.com/log/textflix-report" />
     <meta name="twitter:card" content="summary_large_image" />
     
     <meta name="viewport" content="width=device-width" />
