@@ -21,15 +21,15 @@ var defaultRender =
     return self.renderToken(tokens, idx, options);
   };
 
-md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
-  var aIndex = tokens[idx].attrIndex('target');
-  if (aIndex < 0) {
-    tokens[idx].attrPush(['target', '_blank']);
-  } else {
-    tokens[idx].attrs[aIndex][1] = '_blank';
-  }
-  return defaultRender(tokens, idx, options, env, self);
-};
+// md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
+//   var aIndex = tokens[idx].attrIndex('target');
+//   if (aIndex < 0) {
+//     tokens[idx].attrPush(['target', '_blank']);
+//   } else {
+//     tokens[idx].attrs[aIndex][1] = '_blank';
+//   }
+//   return defaultRender(tokens, idx, options, env, self);
+// };
 
 md.use(require('markdown-it-anchor'));
 md.use(require('markdown-it-table-of-contents'), {
@@ -360,6 +360,18 @@ function makeStyle() {
     }
  
   @media screen and (max-width: 1028px) {
+    h1 {
+      font-size: ${line * 1.75 * hf}px;
+      line-height: ${line * 1.75}px;
+      font-weight: bold;
+      margin-top: ${lq * 2}px;
+      margin-bottom: ${lq * 2}px;
+    }
+    .table-of-contents ul li {
+      padding-top: ${lq / 2}px;
+      padding-bottom: ${lq / 2}px;
+    }
+
     #toc-header {
       margin-top: ${lq}px;
       margin-bottom: ${lq}px;
@@ -534,6 +546,7 @@ function makeHead() {
     <meta name="twitter:card" content="summary_large_image" />
     
     <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.png" />
     
     ${makeStyle()}
     ${makeJS()}
