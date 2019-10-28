@@ -19,7 +19,7 @@ to provide insight into the
 model’s predictions and used this mechanism to provide individual summaries of
 each movie. The entire product was built using a model trained on just 500
 labeled examples. The modeling was implemented with off-the-shelf tools from
-AllenNLP and did not require writing any code. Everything was completed within
+[AllenNLP](https://allennlp.org/) and did not require writing any code. Everything was completed within
 an infrastructure budget of \$25.
 
 ## Sentiment
