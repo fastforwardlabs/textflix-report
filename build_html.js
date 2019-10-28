@@ -1,7 +1,9 @@
-let fs = require('fs');
+let fs = require('fs-extra');
 let path = require('path');
 let md = require('markdown-it')({ typographer: true });
 var implicitFigures = require('markdown-it-implicit-figures');
+
+let deploy_location = process.argv[2];
 
 let line = 28;
 let lq = line / 4;
@@ -563,7 +565,15 @@ for (let f = 0; f < filenames.length; f++) {
   report += content + `\n`;
 }
 let html = wrap(md.render(report));
-fs.writeFileSync(path.join(__dirname, 'out/') + 'index.html', html);
+
+let write_index_to = path.join(__dirname, 'out/');
+if (deploy_location === 'exp') {
+  fs.mkdir(path.join(__dirname, 'exp'));
+  fs.copySync(path.join(__dirname, 'out'), path.join(__dirname, 'exp'));
+  write_index_to = path.join(__dirname, 'exp/');
+}
+
+fs.writeFileSync(write_index_to + 'index.html', html);
 
 let margin = '0.5in';
 

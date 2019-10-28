@@ -21,6 +21,7 @@
     "markdown-it-wiki-toc": "^1.0.4"
   },
   "devDependencies": {
+    "fs-extra": "^8.1.0",
     "markdown-it-container": "^2.0.0",
     "nodemon": "^1.19.4",
     "reload": "^3.0.3"
