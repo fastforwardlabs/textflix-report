@@ -559,7 +559,7 @@ function wrap(content) {
       ${makeHead()}
       <body>
         <div class="content nodebug" style="position: relative;">
-          <div style="margin-top: ${line}px;"><a href="https://experiments.fastforwardlabs.com" target="_blank">Cloudera Fast Forward</a></div>
+          <div style="margin-top: ${line}px;"><a href="https://experiments.fastforwardlabs.com" >Cloudera Fast Forward</a></div>
           ${content}
         </div>
       </body>
